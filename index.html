@@ -2,25 +2,40 @@
   <head>
     <title>Largest Number</title>
     <script>
+      const promptAsync = (message, onData) =>
+        setTimeout(() => onData(prompt(message)), 100);
+
       const getNumbersContainer = () => document.querySelector(".numbers");
+
       const createNumberElement = (number) => {
         const numberElement = document.createElement("li");
         numberElement.innerText = number;
         numberElement.classList.add("number");
 
         return numberElement;
-      }
+      };
 
       const displayNumber = (number) => {
         const numbersContainer = getNumbersContainer();
         const numberElement = createNumberElement(number);
 
         numbersContainer.appendChild(numberElement);
+      };
+
+      const promptNumber = () => {};
+
+      const takeNumberInput = (inputsRemaining, onNumber) => {
+        if(inputsRemaining === 0) return;
+
+        promptAsync("Enter Number", (number) => {
+          onNumber(number);
+          takeNumberInput(inputsRemaining - 1, onNumber);
+        });
       }
 
       const run = () => {
-        displayNumber(1);
-      }
+        takeNumberInput(10, displayNumber);
+      };
 
       window.onload = run;
     </script>
