@@ -1,8 +1,32 @@
 <html>
   <head>
     <title>Largest Number</title>
+    <script>
+      const getNumbersContainer = () => document.querySelector(".numbers");
+      const createNumberElement = (number) => {
+        const numberElement = document.createElement("li");
+        numberElement.innerText = number;
+        numberElement.classList.add("number");
+
+        return numberElement;
+      }
+
+      const displayNumber = (number) => {
+        const numbersContainer = getNumbersContainer();
+        const numberElement = createNumberElement(number);
+
+        numbersContainer.appendChild(numberElement);
+      }
+
+      const run = () => {
+        displayNumber(1);
+      }
+
+      window.onload = run;
+    </script>
   </head>
   <body>
-    <h1>Hello World</h1>
+    <h1>Numbers</h1>
+    <ul class="numbers"></ul>
   </body>
 </html>
