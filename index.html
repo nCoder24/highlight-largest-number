@@ -2,15 +2,15 @@
   <head>
     <title>Largest Number</title>
     <style>
-      .largest {
-        color: blue;
+      .highlight {
+        color: red;
       }
     </style>
     <script>
       const promptAsync = (message, onData) =>
         setTimeout(() => onData(prompt(message)), 100);
 
-      const getNumbersContainer = () => document.querySelector(".numbers");
+      const getNumbersContainer = () => document.querySelector("#numbers");
 
       const createNumberElement = (number) => {
         const numberElement = document.createElement("li");
@@ -42,10 +42,10 @@
           largest.number < current.number ? current : largest
         );
 
-        largestNumber.element.classList.add("largest");
+        largestNumber.element.classList.add("highlight");
       };
 
-      const findAndHighlightLargestNumber = () => {
+      const collectAndHighlightLargestNumber = () => {
         const numbers = [];
 
         const addAndDisplayNumber = (number) => {
@@ -63,11 +63,11 @@
         );
       };
 
-      window.onload = findAndHighlightLargestNumber;
+      window.onload = collectAndHighlightLargestNumber;
     </script>
   </head>
   <body>
     <h1>Numbers</h1>
-    <ul class="numbers"></ul>
+    <ul id="numbers"></ul>
   </body>
 </html>
