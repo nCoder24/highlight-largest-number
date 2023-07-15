@@ -20,49 +20,47 @@
         return numberElement;
       };
 
-      const displayNumber = (number) => {
+      const displayNumber = (numberElement) => {
         const numbersContainer = getNumbersContainer();
-        const numberElement = createNumberElement(number);
-
         numbersContainer.appendChild(numberElement);
       };
 
-      const takeNumberInput = (inputsRemaining, onNumber, onComplete) => {
-        if (inputsRemaining === 0) {
+      const readNumbers = (remaining, onNumber, onComplete) => {
+        if (remaining === 0) {
           onComplete();
           return;
         }
 
         promptAsync("Enter Number", (number) => {
-          onNumber(number);
-          takeNumberInput(inputsRemaining - 1, onNumber, onComplete);
+          onNumber(+number);
+          readNumbers(remaining - 1, onNumber, onComplete);
         });
       };
 
       const highlightLargestNumber = (numbers) => {
-        const { index } = numbers.reduce(
-          (largest, number, index) =>
-            largest.number < number ? { number, index } : largest,
-          { number: -Infinity, index: -1 }
+        const { numberElement } = numbers.reduce((largest, current) =>
+          largest.number < current.number ? current : largest
         );
 
-        const numbersContainer = getNumbersContainer();
-        numbersContainer.children[index].classList.add("largest");
+        numberElement.classList.add("largest");
       };
 
       const findAndHighlightLargestNumber = () => {
         const numbers = [];
 
-        takeNumberInput(
-          10,
-          (number) => {
-            numbers.push(+number);
-            displayNumber(number);
-          },
-          () => {
-            highlightLargestNumber(numbers);
-          }
-        );
+        const addAndDisplayNumber = (number) => {
+          const numberElement = createNumberElement(number);
+          numbers.push({
+            number,
+            numberElement,
+          });
+          displayNumber(numberElement);
+        };
+
+        const highlightLargestFromNumbers = () =>
+          highlightLargestNumber(numbers);
+
+        readNumbers(10, addAndDisplayNumber, highlightLargestFromNumbers);
       };
 
       window.onload = findAndHighlightLargestNumber;
