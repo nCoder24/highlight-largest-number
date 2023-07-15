@@ -24,17 +24,44 @@
 
       const promptNumber = () => {};
 
-      const takeNumberInput = (inputsRemaining, onNumber) => {
-        if(inputsRemaining === 0) return;
+      const takeNumberInput = (inputsRemaining, onNumber, onComplete) => {
+        if (inputsRemaining === 0) {
+          onComplete();
+          return;
+        }
 
         promptAsync("Enter Number", (number) => {
           onNumber(number);
-          takeNumberInput(inputsRemaining - 1, onNumber);
+          takeNumberInput(inputsRemaining - 1, onNumber, onComplete);
         });
-      }
+      };
+
+      const highlightLargestNumber = (numbers) => {
+        const { index } = numbers.reduce(
+          (largest, number, index) =>
+            largest.number < number ? { number, index } : largest,
+          { number: -Infinity, index: -1 }
+        );
+
+        console.log(index);
+
+        const numbersContainer = getNumbersContainer();
+        numbersContainer.children[index].classList.add("largest");
+      };
 
       const run = () => {
-        takeNumberInput(10, displayNumber);
+        const numbers = [];
+
+        takeNumberInput(
+          10,
+          (number) => {
+            numbers.push(+number);
+            displayNumber(number);
+          },
+          () => {
+            highlightLargestNumber(numbers);
+          }
+        );
       };
 
       window.onload = run;
