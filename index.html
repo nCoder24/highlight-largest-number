@@ -38,23 +38,24 @@
       };
 
       const highlightLargestNumber = (numbers) => {
-        const { numberElement } = numbers.reduce((largest, current) =>
+        const largestNumber = numbers.reduce((largest, current) =>
           largest.number < current.number ? current : largest
         );
 
-        numberElement.classList.add("largest");
+        largestNumber.element.classList.add("largest");
       };
 
       const findAndHighlightLargestNumber = () => {
         const numbers = [];
 
         const addAndDisplayNumber = (number) => {
-          const numberElement = createNumberElement(number);
+          const element = createNumberElement(number);
           numbers.push({
             number,
-            numberElement,
+            element,
           });
-          displayNumber(numberElement);
+
+          displayNumber(element);
         };
 
         const highlightLargestFromNumbers = () =>
