@@ -27,8 +27,6 @@
         numbersContainer.appendChild(numberElement);
       };
 
-      const promptNumber = () => {};
-
       const takeNumberInput = (inputsRemaining, onNumber, onComplete) => {
         if (inputsRemaining === 0) {
           onComplete();
@@ -48,13 +46,11 @@
           { number: -Infinity, index: -1 }
         );
 
-        console.log(index);
-
         const numbersContainer = getNumbersContainer();
         numbersContainer.children[index].classList.add("largest");
       };
 
-      const run = () => {
+      const findAndHighlightLargestNumber = () => {
         const numbers = [];
 
         takeNumberInput(
@@ -69,7 +65,7 @@
         );
       };
 
-      window.onload = run;
+      window.onload = findAndHighlightLargestNumber;
     </script>
   </head>
   <body>
