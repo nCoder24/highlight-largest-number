@@ -11,9 +11,7 @@
         setTimeout(() => onData(prompt(message)), 100);
 
       const getNumbersList = () => document.querySelector("#numbers");
-      const getAboveContainer = () => document.querySelector("#above");
-      const getBelowOrEqualContainer = () =>
-        document.querySelector("#below-or-equal");
+      const getGroupsContainer = () => document.querySelector("#groups");
 
       const createNumberElement = (number) => {
         const numberElement = document.createElement("li");
@@ -21,6 +19,19 @@
         numberElement.classList.add("number");
 
         return numberElement;
+      };
+
+      const createGroupElement = (title) => {
+        const groupsContainer = getGroupsContainer();
+
+        const titleElement = document.createElement("h2");
+        titleElement.innerText = title;
+        groupsContainer.appendChild(titleElement);
+
+        const listElement = document.createElement("ul");
+        groupsContainer.appendChild(listElement);
+
+        return listElement;
       };
 
       const displayNumber = (numberElement) => {
@@ -45,28 +56,36 @@
         largestNumber.element.classList.add("highlight");
       };
 
-      displayNumbers = (numbers, container) => {
+      const removeChildren = (container) =>
         [...container.children].forEach((child) =>
           container.removeChild(child)
         );
 
+      const displayNumbers = (numbers, container) => {
         numbers.forEach(({ element }) => container.appendChild(element));
       };
 
-      const groupNumbers = (numbers, threshold) => {
-        return numbers.reduce(
-          ({ above, belowOrEqual }, number) =>
-            number.value > threshold
-              ? { belowOrEqual, above: [...above, number] }
-              : { above, belowOrEqual: [...belowOrEqual, number] },
-          { above: [], belowOrEqual: [] }
+      const displayGroups = (groups) => {
+        const groupsContainer = getGroupsContainer();
+        removeChildren(groupsContainer);
+
+        Object.entries(groups).forEach(([title, numbers]) =>
+          displayNumbers(numbers, createGroupElement(title))
         );
       };
 
-      const groupAndDisplayNumbers = (numbers, threshold) => {
-        const { above, belowOrEqual } = groupNumbers(numbers, threshold);
-        displayNumbers(above, getAboveContainer());
-        displayNumbers(belowOrEqual, getBelowOrEqualContainer());
+      const groupNumbers = (numbers, threshold) => {
+        return numbers.reduce(({...groups}, number) => {
+          if (number.value > threshold) {
+            const numbersBelowThreshold = groups.above || [];
+            groups.above = [...numbersBelowThreshold, number];
+          } else {
+            const numbersAboveThreshold = groups.belowOrEqual || [];
+            groups.belowOrEqual = [...numbersAboveThreshold, number];
+          }
+
+          return groups;
+        }, {});
       };
 
       const collectAndGroupNumbers = () => {
@@ -80,7 +99,7 @@
         promptAsync("Enter Threshold", (threshold) => {
           readNumbers(3, (number) => {
             addNumber(number);
-            groupAndDisplayNumbers(numbers, threshold);
+            displayGroups(groupNumbers(numbers, threshold));
           });
         });
       };
@@ -89,11 +108,6 @@
     </script>
   </head>
   <body>
-    <!-- <h1>Numbers</h1>
-    <ul id="numbers"></ul> -->
-    <h2>Below Or Equal To Threshold</h2>
-    <ul id="below-or-equal"></ul>
-    <h2>Above The Threshold</h2>
-    <ul id="above"></ul>
+    <div id="groups"></div>
   </body>
 </html>
