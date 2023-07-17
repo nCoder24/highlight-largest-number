@@ -1,20 +1,23 @@
 class NumberGroupController {
   #numberGroup;
   #numberGroupView;
+  #numberInputController;
 
-  constructor(numberGroup, numberGroupView) {
+  constructor(numberGroup, numberGroupView, numberInputController) {
     this.#numberGroup = numberGroup;
     this.#numberGroupView = numberGroupView;
+    this.#numberInputController = numberInputController;
   }
 
   start() {
-    this.#numberGroup.add(1);
-    this.#numberGroup.add(3);
-    this.#numberGroup.add(2);
-    this.#numberGroupView.render(this.#numberGroup);
-
-    console.log(this.#numberGroup.numbers);
-    console.log(this.#numberGroup.max);
+    this.#numberInputController.onNumber(
+      (number) => {
+        this.#numberGroup.add(number);
+        this.#numberGroupView.render(this.#numberGroup);
+      }
+    )
+    
+    this.#numberInputController.readNumbers(3);
   }
 }
 
@@ -82,14 +85,36 @@ class NumberGroup {
   }
 }
 
+class NumberInputController {
+  #callback;
+
+  #promptNumber(onComplete) {
+    setTimeout(() => {
+      this.#callback(+prompt("Enter Number"));
+      onComplete();
+    }, 100);
+  }
+
+  onNumber(callback) {
+    this.#callback = callback;
+  }
+
+  readNumbers(remaining) {
+    if (remaining === 0) return;
+    this.#promptNumber(() => this.readNumbers(remaining - 1));
+  }
+}
+
 window.onload = () => {
   const page = document.querySelector("#page");
 
   const numberGroup = new NumberGroup();
   const numberGroupView = new NumberGroupView("Numbers", page);
+  const numberInputController = new NumberInputController();
   const numberGroupController = new NumberGroupController(
     numberGroup,
-    numberGroupView
+    numberGroupView,
+    numberInputController
   );
 
   numberGroupController.start();
