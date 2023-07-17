@@ -48,16 +48,19 @@
       const groupNumbers = (numbers, threshold) => {
         const isAboveThreshold = ({ value }) => value > threshold;
         const isBelowOrEqualToThreshold = ({ value }) => value <= threshold;
+        const compareValue = (a, b) => a.value - b.value;
 
         const aboveList = getAboveList();
         const belowOrEqualList = getBelowOrEqualList();
 
         numbers
           .filter(isAboveThreshold)
+          .sort(compareValue)
           .forEach(({ element }) => aboveList.appendChild(element));
 
         numbers
           .filter(isBelowOrEqualToThreshold)
+          .sort(compareValue)
           .forEach(({ element }) => belowOrEqualList.appendChild(element));
       };
 
