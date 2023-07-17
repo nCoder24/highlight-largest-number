@@ -11,8 +11,8 @@
         setTimeout(() => onData(prompt(message)), 100);
 
       const getNumbersList = () => document.querySelector("#numbers");
-      const getAboveList = () => document.querySelector("#above");
-      const getBelowOrEqualList = () =>
+      const getAboveContainer = () => document.querySelector("#above");
+      const getBelowOrEqualContainer = () =>
         document.querySelector("#below-or-equal");
 
       const createNumberElement = (number) => {
@@ -45,23 +45,28 @@
         largestNumber.element.classList.add("highlight");
       };
 
+      displayNumbers = (numbers, container) => {
+        [...container.children].forEach((child) => container.removeChild(child));
+        numbers.forEach(({ element }) => container.appendChild(element));
+      };
+
       const groupNumbers = (numbers, threshold) => {
         const isAboveThreshold = ({ value }) => value > threshold;
         const isBelowOrEqualToThreshold = ({ value }) => value <= threshold;
         const compareValue = (a, b) => a.value - b.value;
 
-        const aboveList = getAboveList();
-        const belowOrEqualList = getBelowOrEqualList();
+        return {
+          above: numbers.filter(isAboveThreshold).sort(compareValue),
+          belowOrEqual: numbers
+            .filter(isBelowOrEqualToThreshold)
+            .sort(compareValue),
+        };
+      };
 
-        numbers
-          .filter(isAboveThreshold)
-          .sort(compareValue)
-          .forEach(({ element }) => aboveList.appendChild(element));
-
-        numbers
-          .filter(isBelowOrEqualToThreshold)
-          .sort(compareValue)
-          .forEach(({ element }) => belowOrEqualList.appendChild(element));
+      const groupAndDisplayNumbers = (numbers, threshold) => {
+        const { above, belowOrEqual } = groupNumbers(numbers, threshold);
+        displayNumbers(above, getAboveContainer());
+        displayNumbers(belowOrEqual, getBelowOrEqualContainer());
       };
 
       const collectAndGroupNumbers = () => {
@@ -75,7 +80,7 @@
         promptAsync("Enter Threshold", (threshold) => {
           readNumbers(3, (number) => {
             addNumber(number);
-            groupNumbers(numbers, threshold);
+            groupAndDisplayNumbers(numbers, threshold);
           });
         });
       };
