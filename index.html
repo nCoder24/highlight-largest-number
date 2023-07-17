@@ -10,9 +10,9 @@
       const promptAsync = (message, onData) =>
         setTimeout(() => onData(prompt(message)), 100);
 
-      const getNumbersContainer = () => document.querySelector("#numbers");
-      const getAboveContainer = () => document.querySelector("#above");
-      const getBelowOrEqualContainer = () =>
+      const getNumbersList = () => document.querySelector("#numbers");
+      const getAboveList = () => document.querySelector("#above");
+      const getBelowOrEqualList = () =>
         document.querySelector("#below-or-equal");
 
       const createNumberElement = (number) => {
@@ -24,19 +24,16 @@
       };
 
       const displayNumber = (numberElement) => {
-        const numbersContainer = getNumbersContainer();
+        const numbersContainer = getNumbersList();
         numbersContainer.appendChild(numberElement);
       };
 
-      const readNumbers = (remaining, onNumber, onComplete) => {
-        if (remaining === 0) {
-          onComplete();
-          return;
-        }
+      const readNumbers = (remaining, onNumber) => {
+        if (remaining === 0) return;
 
         promptAsync("Enter Number", (number) => {
           onNumber(+number);
-          readNumbers(remaining - 1, onNumber, onComplete);
+          readNumbers(remaining - 1, onNumber);
         });
       };
 
@@ -52,16 +49,16 @@
         const isAboveThreshold = ({ value }) => value > threshold;
         const isBelowOrEqualToThreshold = ({ value }) => value <= threshold;
 
-        const aboveContainer = getAboveContainer();
-        const belowOrEqualContainer = getBelowOrEqualContainer();
+        const aboveList = getAboveList();
+        const belowOrEqualList = getBelowOrEqualList();
 
         numbers
           .filter(isAboveThreshold)
-          .forEach(({ element }) => aboveContainer.appendChild(element));
+          .forEach(({ element }) => aboveList.appendChild(element));
 
         numbers
           .filter(isBelowOrEqualToThreshold)
-          .forEach(({ element }) => belowOrEqualContainer.appendChild(element));
+          .forEach(({ element }) => belowOrEqualList.appendChild(element));
       };
 
       const collectAndHighlightLargestNumber = () => {
@@ -76,9 +73,10 @@
         };
 
         promptAsync("Enter Threshold", (threshold) => {
-          readNumbers(3, addAndDisplayNumber, () =>
-            groupNumbers(numbers, threshold)
-          );
+          readNumbers(3, (number) => {
+            addAndDisplayNumber(number);
+            groupNumbers(numbers, threshold);
+          });
         });
       };
 
