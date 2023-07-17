@@ -22,17 +22,18 @@
         return numberElement;
       };
 
-      const createGroupElement = (title) => {
-        const groupsContainer = getGroupsContainer();
+      const createGroupElement = (title, numbers) => {
+        const groupElement = document.createElement("div");
 
         const titleElement = document.createElement("h2");
         titleElement.innerText = title;
-        groupsContainer.appendChild(titleElement);
-
         const listElement = document.createElement("ul");
-        groupsContainer.appendChild(listElement);
+        numbers.forEach(({ element }) => listElement.appendChild(element));
 
-        return listElement;
+        groupElement.appendChild(titleElement);
+        groupElement.appendChild(listElement);
+
+        return groupElement;
       };
 
       const displayNumber = (numberElement) => {
@@ -70,27 +71,38 @@
         const groupsContainer = getGroupsContainer();
         removeChildren(groupsContainer);
 
-        Object.entries(groups).forEach(([title, numbers]) =>
-          displayNumbers(numbers, createGroupElement(title))
-        );
+        groups.forEach((group) => groupsContainer.appendChild(group));
       };
 
-      const groupNumbers = (numbers, threshold) =>
-        numbers.reduce(({ ...groups }, number) => {
-          if (number.value > threshold) {
-            const numbersBelowThreshold = groups.above || [];
-            groups.above = [...numbersBelowThreshold, number].sort(
-              compareValues
-            );
-          } else {
-            const numbersAboveThreshold = groups.belowOrEqual || [];
-            groups.belowOrEqual = [...numbersAboveThreshold, number].sort(
-              compareValues
-            );
-          }
+      const groupNumbers = (numbers, threshold) => {
+        const groupElements = [];
+        const numbersAbove = [];
+        const numbersBelowOrEqual = [];
 
-          return groups;
-        }, {});
+        numbers.forEach((number) => {
+          if (number.value > threshold) numbersAbove.push(number);
+          else numbersBelowOrEqual.push(number);
+        });
+
+        if (numbersAbove.length > 0) {
+          groupElements.push(
+            createGroupElement(
+              `numbers above ${threshold}`,
+              numbersAbove.sort(compareValues)
+            )
+          );
+        }
+
+        if (numbersBelowOrEqual.length > 0)
+          groupElements.push(
+            createGroupElement(
+              `numbers below or equal to ${threshold}`,
+              numbersBelowOrEqual.sort(compareValues)
+            )
+          );
+
+        return groupElements;
+      };
 
       const collectAndGroupNumbers = () => {
         const numbers = [];
