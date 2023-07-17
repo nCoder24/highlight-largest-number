@@ -13,7 +13,8 @@ class NumberGroupController {
     this.#numberInputController.onNumber(
       (number) => {
         this.#numberGroup.add(number);
-        this.#numberGroupView.render(this.#numberGroup);
+        this.#numberGroupView.render();
+        this.#numberGroupView.highlightMax();
       }
     )
     
@@ -24,9 +25,11 @@ class NumberGroupController {
 class NumberGroupView {
   #parentContainer;
   #container;
+  #numberGroup;
 
-  constructor(title, parentContainer) {
+  constructor(title, parentContainer, numberGroup) {
     this.#parentContainer = parentContainer;
+    this.#numberGroup = numberGroup;
     this.#container = this.#initialize(title);
   }
 
@@ -53,12 +56,17 @@ class NumberGroupView {
     this.#container.appendChild(numberElement);
   }
 
-  render(numberGroup) {
+  highlightMax() {
+    const maxElement = this.#container.children[this.#numberGroup.max.index];
+    maxElement.classList.add("max");
+  }
+
+  render() {
     [...this.#container.children].forEach((child) =>
       this.#container.removeChild(child)
     );
 
-    numberGroup.numbers.forEach((number) => this.#addNumber(number));
+    this.#numberGroup.numbers.forEach((number) => this.#addNumber(number));
   }
 }
 
@@ -109,7 +117,7 @@ window.onload = () => {
   const page = document.querySelector("#page");
 
   const numberGroup = new NumberGroup();
-  const numberGroupView = new NumberGroupView("Numbers", page);
+  const numberGroupView = new NumberGroupView("Numbers", page, numberGroup);
   const numberInputController = new NumberInputController();
   const numberGroupController = new NumberGroupController(
     numberGroup,
