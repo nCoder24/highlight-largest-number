@@ -39,7 +39,7 @@
 
       const highlightLargestNumber = (numbers) => {
         const largestNumber = numbers.reduce((largest, current) =>
-          largest.number < current.number ? current : largest
+          largest.value < current.value ? current : largest
         );
 
         largestNumber.element.classList.add("highlight");
@@ -48,10 +48,10 @@
       const collectAndHighlightLargestNumber = () => {
         const numbers = [];
 
-        const addAndDisplayNumber = (number) => {
-          const element = createNumberElement(number);
+        const addAndDisplayNumber = (value) => {
+          const element = createNumberElement(value);
           numbers.push({
-            number,
+            value,
             element,
           });
 
