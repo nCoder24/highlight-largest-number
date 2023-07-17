@@ -11,6 +11,9 @@
         setTimeout(() => onData(prompt(message)), 100);
 
       const getNumbersContainer = () => document.querySelector("#numbers");
+      const getAboveContainer = () => document.querySelector("#above");
+      const getBelowOrEqualContainer = () =>
+        document.querySelector("#below-or-equal");
 
       const createNumberElement = (number) => {
         const numberElement = document.createElement("li");
@@ -45,6 +48,22 @@
         largestNumber.element.classList.add("highlight");
       };
 
+      const groupNumbers = (numbers, threshold) => {
+        const isAboveThreshold = ({ value }) => value > threshold;
+        const isBelowOrEqualToThreshold = ({ value }) => value <= threshold;
+
+        const aboveContainer = getAboveContainer();
+        const belowOrEqualContainer = getBelowOrEqualContainer();
+
+        numbers
+          .filter(isAboveThreshold)
+          .forEach(({ element }) => aboveContainer.appendChild(element));
+
+        numbers
+          .filter(isBelowOrEqualToThreshold)
+          .forEach(({ element }) => belowOrEqualContainer.appendChild(element));
+      };
+
       const collectAndHighlightLargestNumber = () => {
         const numbers = [];
 
@@ -54,20 +73,24 @@
             value,
             element,
           });
-
-          displayNumber(element);
         };
 
-        readNumbers(10, addAndDisplayNumber, () =>
-          highlightLargestNumber(numbers)
-        );
+        promptAsync("Enter Threshold", (threshold) => {
+          readNumbers(3, addAndDisplayNumber, () =>
+            groupNumbers(numbers, threshold)
+          );
+        });
       };
 
       window.onload = collectAndHighlightLargestNumber;
     </script>
   </head>
   <body>
-    <h1>Numbers</h1>
-    <ul id="numbers"></ul>
+    <!-- <h1>Numbers</h1>
+    <ul id="numbers"></ul> -->
+    <h2>Below Or Equal To Threshold</h2>
+    <ul id="below-or-equal"></ul>
+    <h2>Above The Threshold</h2>
+    <ul id="above"></ul>
   </body>
 </html>
