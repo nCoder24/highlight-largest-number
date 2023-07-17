@@ -10,14 +10,13 @@ class NumberGroupController {
   }
 
   start() {
-    this.#numberInputController.onNumber(
-      (number) => {
-        this.#numberGroup.add(number);
-        this.#numberGroupView.render();
-        this.#numberGroupView.highlightMax();
-      }
-    )
-    
+    this.#numberInputController.onNumber((number) => {
+      this.#numberGroup.add(number);
+      this.#numberGroup.sortDescending();
+      this.#numberGroupView.render();
+      this.#numberGroupView.highlightMax();
+    });
+
     this.#numberInputController.readNumbers(3);
   }
 }
@@ -81,6 +80,14 @@ class NumberGroup {
     this.#numbers.push(number);
   }
 
+  sortAscending() {
+    this.#numbers.sort((a, b) => a - b);
+  }
+
+  sortDescending() {
+    this.#numbers.sort((a, b) => b - a);
+  }
+  
   get numbers() {
     return [...this.#numbers];
   }
