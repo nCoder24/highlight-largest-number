@@ -46,21 +46,21 @@
       };
 
       displayNumbers = (numbers, container) => {
-        [...container.children].forEach((child) => container.removeChild(child));
+        [...container.children].forEach((child) =>
+          container.removeChild(child)
+        );
+
         numbers.forEach(({ element }) => container.appendChild(element));
       };
 
       const groupNumbers = (numbers, threshold) => {
-        const isAboveThreshold = ({ value }) => value > threshold;
-        const isBelowOrEqualToThreshold = ({ value }) => value <= threshold;
-        const compareValue = (a, b) => a.value - b.value;
-
-        return {
-          above: numbers.filter(isAboveThreshold).sort(compareValue),
-          belowOrEqual: numbers
-            .filter(isBelowOrEqualToThreshold)
-            .sort(compareValue),
-        };
+        return numbers.reduce(
+          ({ above, belowOrEqual }, number) =>
+            number.value > threshold
+              ? { belowOrEqual, above: [...above, number] }
+              : { above, belowOrEqual: [...belowOrEqual, number] },
+          { above: [], belowOrEqual: [] }
+        );
       };
 
       const groupAndDisplayNumbers = (numbers, threshold) => {
