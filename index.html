@@ -7,6 +7,7 @@
       }
     </style>
     <script>
+      const compareValues = (n1, n2) => n1.value - n2.value;
       const promptAsync = (message, onData) =>
         setTimeout(() => onData(prompt(message)), 100);
 
@@ -74,19 +75,22 @@
         );
       };
 
-      const groupNumbers = (numbers, threshold) => {
-        return numbers.reduce(({...groups}, number) => {
+      const groupNumbers = (numbers, threshold) =>
+        numbers.reduce(({ ...groups }, number) => {
           if (number.value > threshold) {
             const numbersBelowThreshold = groups.above || [];
-            groups.above = [...numbersBelowThreshold, number];
+            groups.above = [...numbersBelowThreshold, number].sort(
+              compareValues
+            );
           } else {
             const numbersAboveThreshold = groups.belowOrEqual || [];
-            groups.belowOrEqual = [...numbersAboveThreshold, number];
+            groups.belowOrEqual = [...numbersAboveThreshold, number].sort(
+              compareValues
+            );
           }
 
           return groups;
         }, {});
-      };
 
       const collectAndGroupNumbers = () => {
         const numbers = [];
