@@ -64,26 +64,23 @@
           .forEach(({ element }) => belowOrEqualList.appendChild(element));
       };
 
-      const collectAndHighlightLargestNumber = () => {
+      const collectAndGroupNumbers = () => {
         const numbers = [];
 
-        const addAndDisplayNumber = (value) => {
+        const addNumber = (value) => {
           const element = createNumberElement(value);
-          numbers.push({
-            value,
-            element,
-          });
+          numbers.push({ value, element });
         };
 
         promptAsync("Enter Threshold", (threshold) => {
           readNumbers(3, (number) => {
-            addAndDisplayNumber(number);
+            addNumber(number);
             groupNumbers(numbers, threshold);
           });
         });
       };
 
-      window.onload = collectAndHighlightLargestNumber;
+      window.onload = collectAndGroupNumbers;
     </script>
   </head>
   <body>
