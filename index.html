@@ -67,41 +67,34 @@
         numbers.forEach(({ element }) => container.appendChild(element));
       };
 
-      const displayGroups = (groups) => {
-        const groupsContainer = getGroupsContainer();
-        removeChildren(groupsContainer);
+      const displayGroup = (title, numbers) => {
+        const groupContainer = getGroupsContainer();
+        const groupElement = createGroupElement(title, numbers);
 
-        groups.forEach((group) => groupsContainer.appendChild(group));
+        groupContainer.appendChild(groupElement);
       };
 
-      const groupNumbers = (numbers, threshold) => {
-        const groupElements = [];
-        const numbersAbove = [];
-        const numbersBelowOrEqual = [];
+      const groupNumbers = (numbers, threshold) =>
+        numbers.reduce(
+          ({ above, belowOrEqual }, number) =>
+            number.value > threshold
+              ? { belowOrEqual, above: [...above, number] }
+              : { above, belowOrEqual: [...belowOrEqual, number] },
+          { above: [], belowOrEqual: [] }
+        );
 
-        numbers.forEach((number) => {
-          if (number.value > threshold) numbersAbove.push(number);
-          else numbersBelowOrEqual.push(number);
-        });
+      const groupAndDisplayNumbers = (numbers, threshold) => {
+        const { belowOrEqual, above } = groupNumbers(numbers, threshold);
 
-        if (numbersAbove.length > 0) {
-          groupElements.push(
-            createGroupElement(
-              `numbers above ${threshold}`,
-              numbersAbove.sort(compareValues)
-            )
-          );
-        }
-
-        if (numbersBelowOrEqual.length > 0)
-          groupElements.push(
-            createGroupElement(
-              `numbers below or equal to ${threshold}`,
-              numbersBelowOrEqual.sort(compareValues)
-            )
+        removeChildren(getGroupsContainer());
+        if (belowOrEqual.length > 0)
+          displayGroup(
+            `Numbers Below or Equal to ${threshold}`,
+            belowOrEqual.sort(compareValues)
           );
 
-        return groupElements;
+        if (above.length > 0)
+          displayGroup(`Numbers Above ${threshold}`, above.sort(compareValues));
       };
 
       const collectAndGroupNumbers = () => {
@@ -115,7 +108,7 @@
         promptAsync("Enter Threshold", (threshold) => {
           readNumbers(3, (number) => {
             addNumber(number);
-            displayGroups(groupNumbers(numbers, threshold));
+            groupAndDisplayNumbers(numbers, threshold);
           });
         });
       };
